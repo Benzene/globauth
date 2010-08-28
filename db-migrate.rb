@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'db'
+require_relative 'lib/db'
 
 require 'dm-migrations'
 DataMapper.auto_migrate!

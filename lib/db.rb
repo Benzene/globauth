@@ -2,10 +2,10 @@ require 'rubygems'
 require 'dm-core'
 require 'dm-validations'
 
-DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/auth.db" )
+DataMapper.setup( :default, "sqlite3:///home/wilya/globauth/auth.db" )
 
-require 'models/profile'
-require 'models/group'
+require_relative '../models/profile'
+require_relative '../models/group'
 
 DataMapper.finalize
 
