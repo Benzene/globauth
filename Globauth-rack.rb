@@ -47,6 +47,14 @@ class Globauth
 	puts "Status #{status}"
 	puts "Headers #{headers}"
 	puts "Response #{response}"
+
+	if @env['rack.session']['uid'] && @env['rack.session']['user'] && @env['rack.session']['groups'] then
+		lgbox="Authed as #{@env['rack.session']['user']}"
+	else
+		lgbox="<form method=\"post\" action=\"\"><input type=\"text\" content=\"User\" name=\"wUser\"/><input type=\"text\" content=\"Pass\" name=\"wPass\"/><input type=\"submit\" /></form>"
+	end
+
+	puts response.first.sub!('<div id="loginbox">','<div id="loginbox">' << lgbox)
     
 	[status, headers, ["Lol" << response.first]]
   end
