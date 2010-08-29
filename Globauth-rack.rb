@@ -9,24 +9,18 @@ class Globauth
 
     # Setup everything so we have access to env and params easily
     @env = env
-	puts "Env : #{@env}"
 	@request = Rack::Request.new(env)
-	puts "Request : #{@request}"
 	@params = @request.params
-	puts "Params : #{@params}"
 	
 	# Three possible cases are possible :
 	# - We are already authed. Check cookie/session
-	puts "Session id : #{@env['rack.session']['uid']}"
 	if @env['rack.session']['uid'] && @env['rack.session']['user'] && @env['rack.session']['groups'] then
-		puts "Already authed user !"
+		# Nothing to do ?
 	
 	# - We are authing. Check POST method + login/pass in params
 	elsif @env['REQUEST_METHOD'] = "POST" && @params['wUser'] && @params['wPass'] then
-		puts "User #{@params['wUser']} is trying to authenticate with pass : #{@params['wPass']}"
 		p = Profile.get_user(@params['wUser'],@params['wPass'])
 		if p then
-			puts 'Authing was successful !'
 			@env['rack.session']['uid'] = p.id
 			@env['rack.session']['user'] = p.user
 			@env['rack.session']['groups'] = Hash.new
@@ -43,19 +37,20 @@ class Globauth
 	# If everything is all right, we call the app
 	status, headers, response = @app.call(env)
 	
-	# We then need to tweak response to add authentication-related boxes on the final page
-	puts "Status #{status}"
-	puts "Headers #{headers}"
-	puts "Response #{response}"
 
+	# We then need to tweak response to add authentication-related boxes on the final page
+
+	# If authed, we want to know as who
 	if @env['rack.session']['uid'] && @env['rack.session']['user'] && @env['rack.session']['groups'] then
 		lgbox="Authed as #{@env['rack.session']['user']}"
+
+	# Else, we want a way to authenticate ourselves
 	else
 		lgbox="<form method=\"post\" action=\"\"><input type=\"text\" content=\"User\" name=\"wUser\"/><input type=\"text\" content=\"Pass\" name=\"wPass\"/><input type=\"submit\" /></form>"
 	end
 
 	puts response.first.sub!('<div id="loginbox">','<div id="loginbox">' << lgbox)
     
-	[status, headers, ["Lol" << response.first]]
+	[status, headers, response]
   end
 end
