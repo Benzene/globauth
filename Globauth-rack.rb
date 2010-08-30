@@ -18,9 +18,9 @@ class Globauth
 	if env['rack.session']['uid'] && env['rack.session']['user'] && env['rack.session']['groups'] then
 
 		# Do we want to logout ?
-			if env['REQUEST_METHOD'] == 'POST' && @params['logout'] = 'true' then
+			if env['REQUEST_METHOD'] == 'GET' && @params['logout'] = 'true' then
 				env['rack.session.options'][:drop] = true
-				return [200, {'Content-Type' => 'text/html'}, ['<html><head><meta http-equiv="Refresh" content="1;URL="' << '' << '"></head><body>Deconnection effectuee. Redirection en cours</body></html>'] ]
+				return [200, {'Content-Type' => 'text/html'}, ['<html><head><meta http-equiv="Refresh" content="1;URL="' << env['PATH_INFO'] << '"></head><body>Deconnection effectuee. Redirection en cours</body></html>'] ]
 			end
 	
 	# - We are authing. Check POST method + login/pass in params
@@ -57,7 +57,7 @@ class Globauth
 
 	# If authed, we want to know as who
 	if env['rack.session']['uid'] && env['rack.session']['user'] && env['rack.session']['groups'] then
-		lgbox="Authed as #{env['rack.session']['user']} (<form method=\"post\" action=\"\"><input type=\"hidden\" value=\"true\" name=\"logout\" /><input type=\"submit\" /></form>)"
+		lgbox="Authed as #{env['rack.session']['user']} (<a href =\"?logout=true\">Logout</a>)"
 
 	# Else, we want a way to authenticate ourselves
 	else
