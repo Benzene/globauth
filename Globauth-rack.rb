@@ -18,7 +18,7 @@ class Globauth
 	
 	# - We are authing. Check POST method + login/pass in params
 	elsif env['REQUEST_METHOD'] == "POST" && @params['wUser'] && @params['wPass'] then
-		p = Profile.get_user(@params['wUser'],@params['wPass'])
+		p = repository (:globauth) { Profile.get_user(@params['wUser'],@params['wPass']) }
 		if p then
 			env['rack.session']['uid'] = p.id
 			env['rack.session']['user'] = p.user
