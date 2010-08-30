@@ -26,6 +26,12 @@ class Globauth
 			p.groups.each do |g|
 				env['rack.session']['groups'][g.name] = g.descr
 			end
+			
+			# If authing was successful, we need to set request-method back to get
+			env['REQUEST_METHOD'] = 'GET'
+			# We also need to delete the params we used, but how ?
+			
+			
 		end
 
 	# - Else, we are unauthed
