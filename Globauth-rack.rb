@@ -61,7 +61,7 @@ class Globauth
 
 	# Else, we want a way to authenticate ourselves
 	else
-		lgbox="<form method=\"post\" action=\"\"><input type=\"text\" content=\"User\" name=\"wUser\"/><input type=\"text\" content=\"Pass\" name=\"wPass\"/><input type=\"submit\" /></form>"
+		lgbox="<form method=\"post\" action=\"\"><input type=\"text\" id=\"login-text-user\" value=\"User\" name=\"wUser\"/><input type=\"text\" id=\"login-text-pass\" value=\"Pass\" name=\"wPass\"/><input type=\"submit\" id=\"login-submit\" value=\"\"/></form>"
 	end
 
 	response.first.sub!('<div id=\'loginbox\'>','<div id=\'loginbox\'>' << lgbox)
