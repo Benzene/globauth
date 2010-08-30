@@ -19,12 +19,8 @@ class Globauth
 
 		# Do we want to logout ?
 			if env['REQUEST_METHOD'] == 'POST' && @params['logout'] = 'true' then
-				env['rack.session'].delete('uid')
-				env['rack.session'].delete('user')
-				env['rack.session'].delete('groups')
 				env['rack.session.options'][:drop] = true
-				
-				@request_method_reinit = true
+				return [200, {'Content-Type' => 'text/html'}, ['<html><head><meta http-equiv="Refresh" content="1;URL="' << '' << '"></head><body>Deconnection effectuee. Redirection en cours</body></html>'] ]
 			end
 	
 	# - We are authing. Check POST method + login/pass in params
