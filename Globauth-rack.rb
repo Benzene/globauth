@@ -6,6 +6,8 @@ class Globauth
   end
 
   def call(env)
+  
+	@request_method_reinit = false
 
     # Setup everything so we have access to env and params easily
 	@request = Rack::Request.new(env)
@@ -14,10 +16,19 @@ class Globauth
 	# Three possible cases are possible :
 	# - We are already authed. Check cookie/session
 	if env['rack.session']['uid'] && env['rack.session']['user'] && env['rack.session']['groups'] then
-		# Nothing to do ?
+
+		# Do we want to logout ?
+			if env['REQUEST_METHOD'] == 'POST' && @params['logout'] = 'true' then
+				env['rack.session'].delete('uid')
+				env['rack.session'].delete('user')
+				env['rack.session'].delete('groups')
+				env['rack.session.options'][:drop] = true
+				
+				@request_method_reinit = true
+			end
 	
 	# - We are authing. Check POST method + login/pass in params
-	elsif env['REQUEST_METHOD'] == "POST" && @params['wUser'] && @params['wPass'] then
+	elsif env['REQUEST_METHOD'] == 'POST' && @params['wUser'] && @params['wPass'] then
 		p = repository (:globauth) { Profile.get_user(@params['wUser'],@params['wPass']) }
 		if p then
 			env['rack.session']['uid'] = p.id
@@ -27,16 +38,19 @@ class Globauth
 				env['rack.session']['groups'][g.name] = g.descr
 			end
 			
-			# If authing was successful, we need to set request-method back to get
-			env['REQUEST_METHOD'] = 'GET'
-			# We also need to delete the params we used, but how ?
-			
-			
+			@request_method_reinit = true
+						
 		end
 
 	# - Else, we are unauthed
 	else
 		env['rack.session'] = Hash.new
+	end
+	
+	# If we changed something, set request-method back to get
+	if @request_method_reinit then
+		env['REQUEST_METHOD'] = 'GET'
+		# We also need to delete the params we used, but how ?
 	end
 
 	# If everything is all right, we call the app
@@ -47,7 +61,7 @@ class Globauth
 
 	# If authed, we want to know as who
 	if env['rack.session']['uid'] && env['rack.session']['user'] && env['rack.session']['groups'] then
-		lgbox="Authed as #{env['rack.session']['user']}"
+		lgbox="Authed as #{env['rack.session']['user']} (<form method=\"post\" action=\"\"><input type=\"hidden\" value=\"true\" name=\"logout\" /><input type=\"submit\" /></form>)"
 
 	# Else, we want a way to authenticate ourselves
 	else
