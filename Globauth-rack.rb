@@ -54,7 +54,7 @@ class Globauth
 	# It can be restored again using Rack::ContentLength
 	# Note : maybe we should check whether sub! did something or not
 
-	headers['Content-Length'] = nil
+	headers.delete('Content-Length')
 	
 	[status, headers, response]
   end
