@@ -48,8 +48,14 @@ class Globauth
 		lgbox="<form method=\"post\" action=\"\"><input type=\"text\" content=\"User\" name=\"wUser\"/><input type=\"text\" content=\"Pass\" name=\"wPass\"/><input type=\"submit\" /></form>"
 	end
 
-	puts response.first.sub!('<div id=\'loginbox\'>','<div id=\'loginbox\'>' << lgbox)
-    
+	response.first.sub!('<div id=\'loginbox\'>','<div id=\'loginbox\'>' << lgbox)
+
+	# The ContentLength header, that might be set by server, is now most likely obsolete. We remove it.
+	# It can be restored again using Rack::ContentLength
+	# Note : maybe we should check whether sub! did something or not
+
+	headers['Content-Length'] = nil
+	
 	[status, headers, response]
   end
 end
