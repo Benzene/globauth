@@ -18,7 +18,7 @@ class Globauth
 	if env['rack.session']['uid'] && env['rack.session']['user'] && env['rack.session']['groups'] then
 
 		# Do we want to logout ?
-			if env['REQUEST_METHOD'] == 'GET' && @params['logout'] = 'true' then
+			if env['REQUEST_METHOD'] == 'GET' && @params['logout'] == 'true' then
 				env['rack.session.options'][:drop] = true
 				return [200, {'Content-Type' => 'text/html'}, ['<html><head><meta http-equiv="Refresh" content="1;URL="' << env['PATH_INFO'] << '"></head><body>Deconnection effectuee. Redirection en cours</body></html>'] ]
 			end
@@ -64,7 +64,9 @@ class Globauth
 		lgbox="<form method=\"post\" action=\"\"><input type=\"text\" id=\"login-text-user\" value=\"User\" name=\"wUser\"/><input type=\"text\" id=\"login-text-pass\" value=\"Pass\" name=\"wPass\"/><input type=\"submit\" id=\"login-submit\" value=\"\"/></form>"
 	end
 
-	response.first.sub!('<div id=\'loginbox\'>','<div id=\'loginbox\'>' << lgbox)
+	if response.first then
+		response.first.sub!('<div id=\'loginbox\'>','<div id=\'loginbox\'>' << lgbox)
+	end
 
 	# The ContentLength header, that might be set by server, is now most likely obsolete. We remove it.
 	# It can be restored again using Rack::ContentLength
