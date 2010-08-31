@@ -11,8 +11,9 @@ class Profile
 	has n, :groups, :through => Resource
 
 	def self.new_user(user,pass, email, description = '')
+			p = new(:user => user, :pass => pass, :reg_date => Time.now, :content => description, :email => email)
 		begin
-			p = create(:user => user, :pass => pass, :reg_date => Time.now, :content => description, :email => email)
+			p.save
 		rescue Exception => e
 			e.backtrace.inspect
 			e.message
@@ -20,6 +21,7 @@ class Profile
 				puts e
 			end
 		end
+		p
 	end
 
 	def self.get_user(user,pass)
