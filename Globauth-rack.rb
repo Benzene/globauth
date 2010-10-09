@@ -33,10 +33,8 @@ class Globauth
 			p.groups.each do |g|
 				env['rack.session']['groups'][g.name] = g.descr
 			end
-			
-			@request_method_reinit = true
-						
 		end
+		@request_method_reinit = true
 
 	# - Else, we are unauthed
 	else
