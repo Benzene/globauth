@@ -4,7 +4,7 @@ use Rack::Lint
 use Rack::ContentLength
 use Rack::ShowExceptions
 
-use Rack::Session::Pool, :domain => '82.146.49.253', :expire_after => 60 * 60 * 24 * 30, :secure => true
+use Rack::Session::Pool, :domain => 'marchroutka.leukensis.org', :expire_after => 60 * 60 * 24 * 30, :secure => true
 use Globauth
 
 app = lambda { |env| 
